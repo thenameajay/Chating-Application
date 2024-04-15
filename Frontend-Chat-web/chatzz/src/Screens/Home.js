@@ -1,6 +1,41 @@
 import "../Styles/Home.css"
 
 function Home() {
+    const names=["ajay", "amrudh", "parth", "ravi", "patrik", "abhishek", "nitin", "naveen"]
+    const abc=names.map((naam)=>
+
+    <div className="contact-container" >
+        <div className="contact-dp" >
+
+        </div>
+
+        <div className="contact-body" >
+            {naam}
+        </div>
+    </div>
+)
+
+//    function makeContacts(){
+//         let result=[]
+//         let elmnt=(
+//             <div class="contact-container" >
+//                 <div class="contact-dp" >
+    
+//                 </div>
+    
+//                 <div class="contact-body" >
+//                     ajay sharma
+//                 </div>
+//             </div>
+//         )
+//         for (let index = 0; index < 5; index++) {
+//             result+=elmnt
+//         }
+//         console.log(result)
+//         return result
+//    }
+
+//    const rslt=makeContacts()
 
     return(
         <main id="home-outer-div">
@@ -15,64 +50,17 @@ function Home() {
                 </div>
 
                 <div id="all-contacts-container">
-                    <div class="contact-container">
+                    {/* <div class="contact-container">
                         <div class="contact-dp">
 
                         </div>
 
                         <div class="contact-body">
-
+                            ajay sharma
                         </div>
-                    </div>
-
-                    <div class="contact-container">
-                        <div class="contact-dp">
-
-                        </div>
-
-                        <div class="contact-body">
-
-                        </div>
-                    </div>
-                    
-                    <div class="contact-container">
-                        <div class="contact-dp">
-
-                        </div>
-
-                        <div class="contact-body">
-
-                        </div>
-                    </div>
-
-                    <div class="contact-container">
-                        <div class="contact-dp">
-
-                        </div>
-
-                        <div class="contact-body">
-
-                        </div>
-                    </div>
-                    
-                    <div class="contact-container">
-                        <div class="contact-dp">
-
-                        </div>
-
-                        <div class="contact-body">
-
-                        </div>
-                    </div>
-                    <div class="contact-container">
-                        <div class="contact-dp">
-
-                        </div>
-
-                        <div class="contact-body">
-
-                        </div>
-                    </div>
+                    </div> */}
+                    {/* <elmnt style={{display : "flex" , height: "100%", width: "95%", border:"1px solid red"}}/> */}
+                    {abc}
                 </div>
             </div>
 

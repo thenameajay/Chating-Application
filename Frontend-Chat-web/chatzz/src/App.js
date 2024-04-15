@@ -6,7 +6,7 @@ import AllRoutes from "./Routing/AllRoutes";
 function App() { 
   return (
     <>
-      <section id="app-section">
+      <section id="app-section" style={{height:"100%", width:"100%"}}>
         {/* <Navbar /> */}
         <AllRoutes />
       </section>

@@ -80,6 +80,9 @@ body{
 
     border: 1px solid yellow;
 }
+::-webkit-scrollbar{
+    display: none;
+}
 
 .contact-container{
     display: flex;
