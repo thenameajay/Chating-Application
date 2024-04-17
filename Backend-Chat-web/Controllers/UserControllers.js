@@ -5,6 +5,7 @@ const newUserSchema = require("../Schemas/newUser")
 const nodemailer = require('nodemailer')
 const bcrypt = require('bcrypt')
 const { json } = require("body-parser")
+const { response } = require("express")
 
 // for email-------------------------------------------
 const transporter = nodemailer.createTransport({
@@ -222,4 +223,27 @@ exports.showMessages = (req, res) => {
         });
         res.send(r1)
     })
+}
+
+exports.searchUser = (req,res) => {
+    const {searched_username} = req.body
+
+    if(searched_username=="all"){
+        userSchema.find().then((r1)=>{
+            console.log(r1)
+            res.send(r1)
+        })
+    }
+    else{
+        userSchema.find({username:searched_username}).then((r1)=>{
+            if(r1.length!=0){
+                console.log("user found : "+ r1)
+                res.send(r1)
+            }
+            else{
+                console.log("no such user found")
+                res.send("no user found")
+            }
+        })
+    }
 }

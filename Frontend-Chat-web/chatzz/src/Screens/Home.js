@@ -1,43 +1,61 @@
 import "../Styles/Home.css"
+import { useEffect, useState } from "react"
 
 function Home() {
-    const names=["ajay", "amrudh", "parth", "ravi", "patrik", "abhishek", "nitin", "naveen"]
-    const abc=names.map((naam)=>
+    // const names = ["ajay", "amrudh", "parth", "ravi", "patrik", "abhishek", "nitin", "naveen"]
+    let namesss = []
+    let names2=[]
 
-    <div className="contact-container" >
-        <div className="contact-dp" >
+    // useEffect(()=>{
+    //     setNames(namesss)
+    // },[names2])
 
-        </div>
+    const [names, setNames]=useState([])
 
-        <div className="contact-body" >
-            {naam}
-        </div>
-    </div>
-)
+    // const [abc, setabc]=useState([])
 
-//    function makeContacts(){
-//         let result=[]
-//         let elmnt=(
-//             <div class="contact-container" >
-//                 <div class="contact-dp" >
-    
-//                 </div>
-    
-//                 <div class="contact-body" >
-//                     ajay sharma
-//                 </div>
-//             </div>
-//         )
-//         for (let index = 0; index < 5; index++) {
-//             result+=elmnt
-//         }
-//         console.log(result)
-//         return result
-//    }
+    // const abc = names.map((naam) =>
 
-//    const rslt=makeContacts()
+    //     <div className="contact-container" >
+    //         <div className="contact-dp" >
 
-    return(
+    //         </div>
+
+    //         <div className="contact-body" >
+    //             {naam}
+    //         </div>
+    //     </div>
+    // )
+
+
+    function getUsers() {
+        let searched_username = document.getElementById("search-bar").value
+        fetch("http://localhost:8765/search-user", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(
+                { searched_username }
+            )
+        }).then((r1) => {
+            r1.json().then((r2) => {
+
+                console.log(r2)
+
+                let temp = []
+                r2.forEach(element => {
+                    temp += element
+                });
+                setNames(temp)
+                namesss=temp
+
+            })
+            // console.log(r)
+            // console.log(r[0])
+            // console.log(r[1])
+        })
+    }
+
+    return (
         <main id="home-outer-div">
             <div id="all-contacts">
                 <nav id="all-contacts-navbar" class="navbars">
@@ -46,7 +64,7 @@ function Home() {
 
                 <div id="search-div">
                     <input type="search" id="search-bar" placeholder="Search" />
-                    <button id="search-btn">GO</button>
+                    <button id="search-btn" onClick={() => getUsers()}>GO</button>
                 </div>
 
                 <div id="all-contacts-container">
@@ -60,15 +78,28 @@ function Home() {
                         </div>
                     </div> */}
                     {/* <elmnt style={{display : "flex" , height: "100%", width: "95%", border:"1px solid red"}}/> */}
-                    {abc}
+                    {
+                        namesss.map((naam) =>
+
+                        <div className="contact-container" >
+                            <div className="contact-dp" >
+                
+                            </div>
+                
+                            <div className="contact-body" >
+                                {naam}
+                            </div>
+                        </div>
+                    )
+                    }
                 </div>
             </div>
 
             <div id="chating-space">
                 <nav id="chating-space-navbar" class="navbars">
-                    
+
                 </nav>
-                
+
                 <div id="chat-messages">
 
                 </div>

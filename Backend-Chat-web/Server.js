@@ -4,6 +4,9 @@ const myroutes=require('./Routes/UserRoutes')
 const bodyParser=require('body-parser')
 const db = require("./DB/Db")
 const port = 8765
+const cors=require("cors")
+
+app.use(cors({origin:'http://localhost:3000'}))
 
 app.use(
     express.urlencoded({ extended: true })

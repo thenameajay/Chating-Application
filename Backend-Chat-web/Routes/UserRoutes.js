@@ -7,5 +7,6 @@ router.post('/register/otp-verification',controller.verifyOtp)
 router.post('/login',controller.login)
 router.post('/send-message',controller.sendMessage)
 router.post('/chats',controller.showMessages)
+router.post('/search-user',controller.searchUser)
 
 module.exports=router
