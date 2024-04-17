@@ -3,14 +3,15 @@ import { useEffect, useState } from "react"
 
 function Home() {
     // const names = ["ajay", "amrudh", "parth", "ravi", "patrik", "abhishek", "nitin", "naveen"]
-    let namesss = []
-    let names2=[]
 
     // useEffect(()=>{
     //     setNames(namesss)
     // },[names2])
 
-    const [names, setNames]=useState([])
+    const [user, setUser]=useState([])
+    const [current_person, setCurrentPerson]=useState()
+
+
 
     // const [abc, setabc]=useState([])
 
@@ -40,19 +41,27 @@ function Home() {
             r1.json().then((r2) => {
 
                 console.log(r2)
+                console.log("started writing names")
 
                 let temp = []
                 r2.forEach(element => {
-                    temp += element
+                    temp.push(element) 
                 });
-                setNames(temp)
-                namesss=temp
+                setUser(temp)
+                console.log("names successfully written")
+                console.log(temp)
 
             })
             // console.log(r)
             // console.log(r[0])
             // console.log(r[1])
         })
+    }
+
+    function friendSelected(naam){
+       setCurrentPerson(naam)
+       console.log("its clicked")
+       console.log(current_person.name)
     }
 
     return (
@@ -79,15 +88,15 @@ function Home() {
                     </div> */}
                     {/* <elmnt style={{display : "flex" , height: "100%", width: "95%", border:"1px solid red"}}/> */}
                     {
-                        namesss.map((naam) =>
+                        user.map((naam) =>
 
-                        <div className="contact-container" >
+                        <div className="contact-container" onClick={()=>friendSelected(naam)} >
                             <div className="contact-dp" >
                 
                             </div>
                 
                             <div className="contact-body" >
-                                {naam}
+                                {naam.name}
                             </div>
                         </div>
                     )
@@ -97,7 +106,7 @@ function Home() {
 
             <div id="chating-space">
                 <nav id="chating-space-navbar" class="navbars">
-
+                    <h2 id="chating-space-navbar-heading">{current_person==undefined?"":current_person.name}</h2>
                 </nav>
 
                 <div id="chat-messages">
