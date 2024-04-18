@@ -4,8 +4,6 @@ const messageSchema = require("../Schemas/messages")
 const newUserSchema = require("../Schemas/newUser")
 const nodemailer = require('nodemailer')
 const bcrypt = require('bcrypt')
-const { json } = require("body-parser")
-const { response } = require("express")
 
 // for email-------------------------------------------
 const transporter = nodemailer.createTransport({
@@ -23,6 +21,11 @@ const transporter = nodemailer.createTransport({
 
 exports.addUser = (req, res) => {
     const { name, username, email, password } = req.body;
+
+    console.log(name)
+    console.log(username)
+    console.log(email)
+    console.log(password)
 
     userSchema.find({ email: email }).then((rslt) => {
         if (rslt.length == 0) {
