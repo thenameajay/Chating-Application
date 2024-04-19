@@ -1,5 +1,6 @@
 import "../Styles/Home.css"
 import { useEffect, useState } from "react"
+import loged_in_user from "./LogedInUser"
 
 function Home() {
     // const names = ["ajay", "amrudh", "parth", "ravi", "patrik", "abhishek", "nitin", "naveen"]
@@ -12,23 +13,6 @@ function Home() {
     const [current_person, setCurrentPerson]=useState()
 
 
-
-    // const [abc, setabc]=useState([])
-
-    // const abc = names.map((naam) =>
-
-    //     <div className="contact-container" >
-    //         <div className="contact-dp" >
-
-    //         </div>
-
-    //         <div className="contact-body" >
-    //             {naam}
-    //         </div>
-    //     </div>
-    // )
-
-
     function getUsers() {
         let searched_username = document.getElementById("search-bar").value
         fetch("http://localhost:8765/search-user", {
@@ -39,29 +23,13 @@ function Home() {
             )
         }).then((r1) => {
             r1.json().then((r2) => {
-
-                console.log(r2)
-                console.log("started writing names")
-
-                let temp = []
-                r2.forEach(element => {
-                    temp.push(element) 
-                });
-                setUser(temp)
-                console.log("names successfully written")
-                console.log(temp)
-
+                setUser(r2)
             })
-            // console.log(r)
-            // console.log(r[0])
-            // console.log(r[1])
         })
     }
 
     function friendSelected(naam){
        setCurrentPerson(naam)
-       console.log("its clicked")
-       console.log(current_person.name)
     }
 
     return (
@@ -69,6 +37,10 @@ function Home() {
             <div id="all-contacts">
                 <nav id="all-contacts-navbar" class="navbars">
                     <a>CHATZ</a>
+                </nav>
+
+                <nav id="user-bar" class="navbars">
+                    <a>{loged_in_user.username}</a>
                 </nav>
 
                 <div id="search-div">

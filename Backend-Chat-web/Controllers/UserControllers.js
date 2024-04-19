@@ -20,6 +20,7 @@ const transporter = nodemailer.createTransport({
 // USER REGISTRATATION-------------------
 
 exports.addUser = (req, res) => {
+
     const { name, username, email, password } = req.body;
 
     console.log(name)
@@ -72,7 +73,21 @@ exports.addUser = (req, res) => {
                 })
             }).catch((err) => {
                 console.log("error in sending otp")
+                // otpSchema.deleteOne({ email: email }).then((r3) => {
+                //     console.log("opt data deleted")
+                // }).catch((err) => {
+                //     console.log("error in otp data deletion")
+                // })
+
+                // newUserSchema.deleteOne({ email: email }).then((r4) => {
+                //     console.log("newUserSchema data deleted")
+                // }).catch((err) => {
+                //     console.log("error in newUserSchema data deletion")
+                // })
                 console.log(err)
+
+                res.send("error in sending otp")
+
             })
 
             bcrypt.genSalt(10, function (err, salt) {
@@ -86,7 +101,7 @@ exports.addUser = (req, res) => {
                         }
                         else {
                             encrptPassword = hash
-                            newUserSchema.insertMany({ name: name, username:username, email: email, password: encrptPassword }).then((r11) => {
+                            newUserSchema.insertMany({ name: name, username: username, email: email, password: encrptPassword }).then((r11) => {
                                 console.log("data stored successfully")
                             }).catch((err) => {
                                 console.log("error in storing data")
@@ -136,7 +151,7 @@ exports.verifyOtp = (req, res) => {
                     if (userEnteredOtp == r2[0].otp) {
 
                         if (Number(new Date) - Number(r2[0].time) < 300000) {
-                            userSchema.insertMany({ name: r1[0].name, username:r1[0].username, email: r1[0].email, password: r1[0].password })
+                            userSchema.insertMany({ name: r1[0].name, username: r1[0].username, email: r1[0].email, password: r1[0].password })
                             res.status(200).send({ status: 200, message: "Registration Successfull !" })
                             console.log("registration successfull")
                         }
@@ -171,9 +186,9 @@ exports.verifyOtp = (req, res) => {
 // USER LOGIN-------------
 
 exports.login = (req, res) => {
-    const { email, password } = req.body
+    const { username, password } = req.body
 
-    userSchema.find({ email: email }).then((r1) => {
+    userSchema.find({ username: username }).then((r1) => {
         if (r1.length == 0) {
             res.send("no such user exists")
             console.log("no such user exists")
@@ -186,8 +201,7 @@ exports.login = (req, res) => {
                 else {
                     if (status) {
                         console.log("Login Successful, Welcome " + r1[0].name)
-                        res.status(200).send({ status: 200, message: "login successfull" })
-                        userSchema.updateOne({email : email}, {$set:{latitude : String(lat), longitude:String(lon)}}).catch((errr)=>{console.log(errr)})
+                        res.status(200).send({ status: 200, message: "login successfull", Object:r1[0] })
                     }
                     else {
                         console.log("invalid password")
@@ -202,13 +216,13 @@ exports.login = (req, res) => {
 
 // SENDING MESSAGE ------------------------------------------
 
-exports.sendMessage = (req, res) =>{
+exports.sendMessage = (req, res) => {
     const { sender, reciever, content } = req.body;
 
-    messageSchema.insertMany({sender:sender, reciever:reciever, time:Number(new Date()), content:content }).then((r1)=>{
+    messageSchema.insertMany({ sender: sender, reciever: reciever, time: Number(new Date()), content: content }).then((r1) => {
         console.log(`${sender} to ${reciever} : messege sent`)
         res.send("message sent")
-    }).catch((err)=>{
+    }).catch((err) => {
         console.log(`${sender} to ${reciever} : messege not sent`)
         console.log(err)
     })
@@ -220,7 +234,7 @@ exports.sendMessage = (req, res) =>{
 exports.showMessages = (req, res) => {
     const { sender, reciever } = req.body;
 
-    messageSchema.find({ $or: [{sender:sender, reciever:reciever}, {sender:reciever, reciever:sender}]}).then((r1)=>{
+    messageSchema.find({ $or: [{ sender: sender, reciever: reciever }, { sender: reciever, reciever: sender }] }).then((r1) => {
         r1.forEach(element => {
             console.log(`${element.sender} : ${element.content}`)
         });
@@ -228,25 +242,98 @@ exports.showMessages = (req, res) => {
     })
 }
 
-exports.searchUser = (req,res) => {
-    const {searched_username} = req.body
+exports.searchUser = (req, res) => {
+    const { searched_username } = req.body
 
-    if(searched_username=="all"){
-        userSchema.find().then((r1)=>{
+    if (searched_username == "all") {
+        userSchema.find().then((r1) => {
             console.log(r1)
             res.send(r1)
         })
     }
-    else{
-        userSchema.find({username:searched_username}).then((r1)=>{
-            if(r1.length!=0){
-                console.log("user found : "+ r1)
+    else {
+        userSchema.find({ username: searched_username }).then((r1) => {
+            if (r1.length != 0) {
+                console.log("user found : " + r1)
                 res.send(r1)
             }
-            else{
+            else {
                 console.log("no such user found")
                 res.send("no user found")
             }
         })
     }
+}
+
+
+// FOR DEBUGGING -----------------------------------------------------------------
+
+exports.mailTest = (req, res) => {
+    const { email } = req.body
+    transporter.sendMail({
+        from: `"Weathering"<${process.env.MY_MAIL_ID}>`,
+        to: email,
+        subject: "OTP verification",
+        text: "OTP mail",
+        html: `
+        <div style="background-color:white">
+            <br/>
+            Please ignore if it not belongs to you and never share otp with anyone.
+            <br/>
+            Thank You for Registering.
+            <br/>
+            Team Weathering
+        </div>
+        `
+
+    }).then((r) => {
+        console.log("mail sended successfully")
+        res.send("tested OK")
+    }).catch((err) => {
+        console.log("mail not sent")
+        console.log(err)
+        res.send("testing unsuccessfull")
+    })
+}
+
+// ---------------------------------------------------------------------
+
+exports.indipendentAccountCreation = (req, res) => {
+    const { name, username, email, password } = req.body
+
+    userSchema.find({ username: username }).then((r) => {
+        if (r.length != 0) {
+            console.log("user already existed")
+            res.send("this username is already taken")
+        }
+        else {
+            bcrypt.genSalt(10, function (err, salt) {
+                if (err) {
+                    console.log("Error in Encryption salt generation !")
+                    res.send("Error in Encryption salt generation !")
+                }
+                else {
+                    bcrypt.hash(password, salt, function (err, hash) {
+                        if (err) {
+                            console.log("Error in Encryption hash Generation ! (indipendent account)")
+                        }
+                        else {
+                            encrptPassword = hash
+                            userSchema.insertMany({ name: name, username: username, email: email, password: encrptPassword }).then((r1) => {
+                                console.log("data storation : SUCCESSFULL ")
+                                res.send("data stored successfully")
+                            }).catch((err) => {
+                                console.log("error in storing data (indipendent account)")
+                                console.log(err)
+                            })
+                        }
+                    })
+                }
+            })
+        }
+    }).catch((err) => {
+        console.log("error in indipendent account creation !")
+        res.send("error in indipendent account creation !")
+        console.log(err)
+    })
 }
