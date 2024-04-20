@@ -163,14 +163,39 @@ body{
 
 #chat-messages{
     display: flex;
-    flex-direction: column;
+    flex-direction: column-reverse;
     height: 80%;
     width: 100%;
 
     border: 1px solid black;
 }
 
-#message-div{
+.message-body{
+    display: flex;
+    flex-direction: column;
+    border: 1px solid black;
+    height: auto;
+    width: 70%;
+    background-color: #160a14b3;
+    border-radius: 20px;
+}
+
+.sender-name, .message-time{
+    color: white;
+    height: auto;
+    width: 100%;
+    font-size: 80%;
+}
+
+.message{
+    height: auto;
+    width: 100%;
+    font-size: 140%;
+    border: 1px solid white;
+    color: white;
+}
+
+#writing-message-div{
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;

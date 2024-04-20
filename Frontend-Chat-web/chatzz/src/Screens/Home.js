@@ -2,6 +2,12 @@ import "../Styles/Home.css"
 import { useEffect, useState } from "react"
 import loged_in_user from "./LogedInUser"
 
+// WEB SOCKET --------------------------------------------
+import io from 'socket.io-client';
+
+const socket = io.connect('http://localhost:8765');
+// ------------------------------------------------------------------
+
 function Home() {
     // const names = ["ajay", "amrudh", "parth", "ravi", "patrik", "abhishek", "nitin", "naveen"]
 
@@ -9,8 +15,76 @@ function Home() {
     //     setNames(namesss)
     // },[names2])
 
-    const [user, setUser]=useState([])
-    const [current_person, setCurrentPerson]=useState()
+    const [user, setUser] = useState([])
+    const [current_person, setCurrentPerson] = useState()
+    const [chat_messages, setChatMessages] = useState([])
+
+    // WEB SOCKET -------------------------------------------------------
+
+    const [messages, setMessages] = useState([]);
+    const [input, setInput] = useState('');
+
+    useEffect(() => {
+        // Listen for incoming chat messages
+
+        socket.emit('connection')
+        socket.on('chat message', (message) => {
+            setMessages((prevMessages) => [...prevMessages, message]);
+            console.log(message)
+        });
+
+    }, []);
+
+    function sendMessage() {
+        if (input.trim() !== '') {
+            socket.emit('chat message', input);
+            setInput('');
+        }
+    };
+
+    // ------------------------------------------------------------------
+
+    // function testing(){
+    //     let obj1={
+    //         naam:"ajay",
+    //         kaam:"developer"
+    //     }
+
+    //     let obj2={
+    //         naam:"ajay",
+    //         kaam:"developer"
+    //     }
+
+    //     if(obj1.naam===obj2.naam){
+    //         console.log("yes, they are equal ")
+    //         console.log(obj1)
+    //         console.log(obj2)
+    //     }
+    //     else{
+    //         console.log("not equal")
+    //         console.log(obj1)
+    //         console.log(obj2)
+    //     }
+    // }
+
+    function showChats() {
+        // HERE SENDER AND RECIEVER ARE NOT OBJECTS, THEY ARE STRINGS ----------
+
+        let sd = "ajay"
+        let rc = "parth"
+        fetch("http://localhost:8765/chats", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(
+                { sender: sd, reciever: rc }
+            )
+        }).then((r) => {
+            r.json().then((r1) => {
+                console.log(r1)
+                setChatMessages(r1)
+            })
+        })
+    }
 
 
     function getUsers() {
@@ -28,8 +102,8 @@ function Home() {
         })
     }
 
-    function friendSelected(naam){
-       setCurrentPerson(naam)
+    function friendSelected(naam) {
+        setCurrentPerson(naam)
     }
 
     return (
@@ -49,45 +123,47 @@ function Home() {
                 </div>
 
                 <div id="all-contacts-container">
-                    {/* <div class="contact-container">
-                        <div class="contact-dp">
-
-                        </div>
-
-                        <div class="contact-body">
-                            ajay sharma
-                        </div>
-                    </div> */}
-                    {/* <elmnt style={{display : "flex" , height: "100%", width: "95%", border:"1px solid red"}}/> */}
                     {
                         user.map((naam) =>
 
-                        <div className="contact-container" onClick={()=>friendSelected(naam)} >
-                            <div className="contact-dp" >
-                
+                            <div className="contact-container" onClick={() => friendSelected(naam)} >
+                                <div className="contact-dp" >
+
+                                </div>
+
+                                <div className="contact-body" >
+                                    {naam.name}
+                                </div>
                             </div>
-                
-                            <div className="contact-body" >
-                                {naam.name}
-                            </div>
-                        </div>
-                    )
+                        )
                     }
                 </div>
             </div>
 
             <div id="chating-space">
                 <nav id="chating-space-navbar" class="navbars">
-                    <h2 id="chating-space-navbar-heading">{current_person==undefined?"":current_person.name}</h2>
+                    <h2 id="chating-space-navbar-heading">{current_person == undefined ? "" : current_person.name}</h2>
                 </nav>
 
                 <div id="chat-messages">
+                    <div class="message-body">
+                        <div class="sender-name">
+                            ajay
+                        </div>
 
+                        <div class="message">
+                            or bhai kya haal chall !!!
+                        </div>
+
+                        <div class="message-time">
+                            time
+                        </div>
+                    </div>
                 </div>
 
-                <div id="message-div">
-                    <input id="message-bar" type="text" placeholder="Type a message..." />
-                    <button id="send-btn">SEND</button>
+                <div id="writing-message-div">
+                    <input id="message-bar" type="text" onChange={(e) => setInput(e.target.value)} placeholder="Type a message..." />
+                    <button id="send-btn" onClick={() => sendMessage()} >SEND</button>
                 </div>
             </div>
         </main>
