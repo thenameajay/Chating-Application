@@ -24,23 +24,30 @@ function Home() {
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState('');
 
-    useEffect(() => {
-        // Listen for incoming chat messages
-
-        socket.emit('connection')
-        socket.on('chat message', (message) => {
-            setMessages((prevMessages) => [...prevMessages, message]);
-            console.log(message)
-        });
-
-    }, []);
-
     function sendMessage() {
         if (input.trim() !== '') {
             socket.emit('chat message', input);
             setInput('');
         }
     };
+
+    
+    useEffect(() => {
+        // Listen for incoming chat messages
+        
+        // socket.emit('chat message', 'ajay_sharma')
+
+        socket.emit('connection')
+
+        socket.emit('user auth', 'ajay_ji')
+        
+        socket.on('chat message', (message) => {
+            setMessages((prevMessages) => [...prevMessages, message]);
+            console.log(message)
+            console.log(socket.id)
+        });
+
+    }, []);
 
     // ------------------------------------------------------------------
 
