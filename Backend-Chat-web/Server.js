@@ -57,11 +57,8 @@ io.on('connection', (socket) => {
       clientDetails.socketID = socket.id
       active_clients.push(clientDetails)
     }
-    else{
-      console.log("he is already present")
-    }
 
-    console.log(active_clients)
+    // console.log(active_clients)
   })
 
 
@@ -71,7 +68,7 @@ io.on('connection', (socket) => {
 
   // Handle a chat message event
   socket.on('chat message', (message) => {
-    console.log('Message:', message);
+    console.log('Message:', message.json());
     // Broadcast the message to all connected clients
     io.emit('chat message', message);
   });
@@ -81,6 +78,13 @@ io.on('connection', (socket) => {
   // Handle disconnection
   socket.on('disconnect', () => {
     console.log('A client disconnected');
+    let index=active_clients.findIndex(obj => obj.username === clientDetails.username)
+
+    if(index!=-1){
+      active_clients.splice(index,1)
+    }
+
+    console.log(active_clients)
 
     delete connectedClients[socket.id];
   });

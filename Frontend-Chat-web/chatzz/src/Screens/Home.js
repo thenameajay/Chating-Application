@@ -24,23 +24,30 @@ function Home() {
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState('');
 
+    const tempObj = {
+        naam: "plyr",
+        kaam: "hacker"
+    }
+
     function sendMessage() {
         if (input.trim() !== '') {
-            socket.emit('chat message', input);
-            setInput('');
+            // socket.emit('chat message', input);
+            // socket.emit('chat message', JSON.stringify(tempObj));  WHY ITS NOT WORKING ???
+            // setInput('');
         }
     };
 
-    
+
     useEffect(() => {
+        showChats()
         // Listen for incoming chat messages
-        
+
         // socket.emit('chat message', 'ajay_sharma')
 
         socket.emit('connection')
 
-        socket.emit('user auth', 'ajay_ji')
-        
+        socket.emit('user auth', loged_in_user.username)
+
         socket.on('chat message', (message) => {
             setMessages((prevMessages) => [...prevMessages, message]);
             console.log(message)
@@ -50,6 +57,11 @@ function Home() {
     }, []);
 
     // ------------------------------------------------------------------
+
+    useEffect(() => {
+        showChats()
+        console.log("second useeffect called !")
+    }, [messages, current_person])
 
     // function testing(){
     //     let obj1={
@@ -77,20 +89,29 @@ function Home() {
     function showChats() {
         // HERE SENDER AND RECIEVER ARE NOT OBJECTS, THEY ARE STRINGS ----------
 
-        let sd = "ajay"
-        let rc = "parth"
-        fetch("http://localhost:8765/chats", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(
-                { sender: sd, reciever: rc }
-            )
-        }).then((r) => {
-            r.json().then((r1) => {
-                console.log(r1)
-                setChatMessages(r1)
+        console.log("loged in user---")
+        console.log(loged_in_user)
+
+        console.log("current user---")
+        console.log(current_person)
+        
+
+        if (loged_in_user != undefined && current_person != undefined) { 
+
+            fetch("http://localhost:8765/chats", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(
+                    { sender : loged_in_user.username, reciever:current_person.username }
+                )
+            }).then((r) => {
+                r.json().then((r1) => {
+                    console.log("messages are ---")
+                    console.log(r1)
+                    setChatMessages(r1)
+                })
             })
-        })
+        }
     }
 
 
@@ -153,19 +174,23 @@ function Home() {
                 </nav>
 
                 <div id="chat-messages">
-                    <div class="message-body">
-                        <div class="sender-name">
-                            ajay
-                        </div>
+                    {
+                        chat_messages.map((msg) =>
+                            <div class="message-body" >
+                                <div class="sender-name" style={msg.sender==loged_in_user.username?{flexDirection:"row-reverse"}:{flexDirection:"row"}}>
+                                    {msg.sender}
+                                </div>
 
-                        <div class="message">
-                            or bhai kya haal chall !!!
-                        </div>
+                                <div class="message" style={msg.sender==loged_in_user.username?{flexDirection:"row-reverse"}:{flexDirection:"row"}}>
+                                    {msg.content}
+                                </div>
 
-                        <div class="message-time">
-                            time
-                        </div>
-                    </div>
+                                <div class="message-time" style={msg.sender==loged_in_user.username?{flexDirection:"row-reverse"}:{flexDirection:"row"}}>
+                                    {msg.time}
+                                </div>
+                            </div>
+                        )
+                    }
                 </div>
 
                 <div id="writing-message-div">

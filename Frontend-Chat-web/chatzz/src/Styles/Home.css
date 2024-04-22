@@ -163,7 +163,7 @@ body{
 
 #chat-messages{
     display: flex;
-    flex-direction: column-reverse;
+    flex-direction: column;
     height: 80%;
     width: 100%;
 
@@ -181,6 +181,7 @@ body{
 }
 
 .sender-name, .message-time{
+    display:flex;
     color: white;
     height: auto;
     width: 100%;
@@ -188,6 +189,7 @@ body{
 }
 
 .message{
+    display: flex;
     height: auto;
     width: 100%;
     font-size: 140%;
