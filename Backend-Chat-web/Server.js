@@ -68,7 +68,7 @@ io.on('connection', (socket) => {
 
   // Handle a chat message event
   socket.on('chat message', (message) => {
-    console.log('Message:', message.json());
+    console.log('Message:', message);
     // Broadcast the message to all connected clients
     io.emit('chat message', message);
   });

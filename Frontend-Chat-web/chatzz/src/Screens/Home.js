@@ -30,10 +30,22 @@ function Home() {
     }
 
     function sendMessage() {
-        if (input.trim() !== '') {
+        if (input !== '') {
             // socket.emit('chat message', input);
-            // socket.emit('chat message', JSON.stringify(tempObj));  WHY ITS NOT WORKING ???
-            // setInput('');
+            // socket.emit('chat message', JSON.stringify(tempObj));  //WHY ITS NOT WORKING ???
+            socket.emit('chat message', tempObj);  //WHY ITS NOT WORKING ???
+
+            // fetch("http://localhost:8765/send-message", {
+            //     method: "POST",
+            //     headers: { "Content-Type": "application/json" },
+            //     body: JSON.stringify(
+            //         { sender: loged_in_user.username, reciever: current_person.username, content: input }
+            //     )
+            // }).then((r)=>{
+            //     setInput('');
+            // })
+
+            
         }
     };
 
@@ -94,15 +106,15 @@ function Home() {
 
         console.log("current user---")
         console.log(current_person)
-        
 
-        if (loged_in_user != undefined && current_person != undefined) { 
+
+        if (loged_in_user != undefined && current_person != undefined) {
 
             fetch("http://localhost:8765/chats", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(
-                    { sender : loged_in_user.username, reciever:current_person.username }
+                    { sender: loged_in_user.username, reciever: current_person.username }
                 )
             }).then((r) => {
                 r.json().then((r1) => {
@@ -176,17 +188,19 @@ function Home() {
                 <div id="chat-messages">
                     {
                         chat_messages.map((msg) =>
-                            <div class="message-body" >
-                                <div class="sender-name" style={msg.sender==loged_in_user.username?{flexDirection:"row-reverse"}:{flexDirection:"row"}}>
-                                    {msg.sender}
-                                </div>
+                            <div class="message-cell" style={msg.sender == loged_in_user.username ? { flexDirection: "row-reverse" } : { flexDirection: "row" }}>
+                                <div class="message-body" >
+                                    <div class="sender-name" style={msg.sender == loged_in_user.username ? { flexDirection: "row-reverse" } : { flexDirection: "row" }}>
+                                        {msg.sender}
+                                    </div>
 
-                                <div class="message" style={msg.sender==loged_in_user.username?{flexDirection:"row-reverse"}:{flexDirection:"row"}}>
-                                    {msg.content}
-                                </div>
+                                    <div class="message" style={msg.sender == loged_in_user.username ? { flexDirection: "row-reverse" } : { flexDirection: "row" }}>
+                                        {msg.content}
+                                    </div>
 
-                                <div class="message-time" style={msg.sender==loged_in_user.username?{flexDirection:"row-reverse"}:{flexDirection:"row"}}>
-                                    {msg.time}
+                                    <div class="message-time" style={msg.sender == loged_in_user.username ? { flexDirection: "row-reverse" } : { flexDirection: "row" }}>
+                                        {msg.time}
+                                    </div>
                                 </div>
                             </div>
                         )
@@ -194,7 +208,9 @@ function Home() {
                 </div>
 
                 <div id="writing-message-div">
-                    <input id="message-bar" type="text" onChange={(e) => setInput(e.target.value)} placeholder="Type a message..." />
+                    <input id="message-bar" type="text" onChange={(e) => setInput(e.target.value.trim())} placeholder="Type a message..." />
+                    {/* error ho to uper se .trim() hta dena */}
+                    {/* uper se if input!='' hta dena */}
                     <button id="send-btn" onClick={() => sendMessage()} >SEND</button>
                 </div>
             </div>
