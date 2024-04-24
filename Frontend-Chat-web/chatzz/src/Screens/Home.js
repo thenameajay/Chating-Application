@@ -18,10 +18,10 @@ function Home() {
     const [user, setUser] = useState([])
     const [current_person, setCurrentPerson] = useState()
     const [chat_messages, setChatMessages] = useState([])
+    const [last_message, setLastMessage] = useState()
 
     // WEB SOCKET -------------------------------------------------------
 
-    const [messages, setMessages] = useState([]);
     const [input, setInput] = useState('');
 
     const tempObj = {
@@ -32,8 +32,10 @@ function Home() {
     function sendMessage() {
         if (input !== '') {
             // socket.emit('chat message', input);
-            // socket.emit('chat message', JSON.stringify(tempObj));  //WHY ITS NOT WORKING ???
-            socket.emit('chat message', tempObj);  //WHY ITS NOT WORKING ???
+            // socket.emit('chat message', JSON.stringify(tempObj));
+            socket.emit('chat message', { sender: loged_in_user.username, reciever: current_person.username, content: input });
+
+
 
             // fetch("http://localhost:8765/send-message", {
             //     method: "POST",
@@ -45,13 +47,13 @@ function Home() {
             //     setInput('');
             // })
 
-            
+
         }
     };
 
 
     useEffect(() => {
-        showChats()
+        // showChats()
         // Listen for incoming chat messages
 
         // socket.emit('chat message', 'ajay_sharma')
@@ -61,7 +63,7 @@ function Home() {
         socket.emit('user auth', loged_in_user.username)
 
         socket.on('chat message', (message) => {
-            setMessages((prevMessages) => [...prevMessages, message]);
+            setChatMessages((prevMessages) => [...prevMessages, message]);
             console.log(message)
             console.log(socket.id)
         });
@@ -73,7 +75,7 @@ function Home() {
     useEffect(() => {
         showChats()
         console.log("second useeffect called !")
-    }, [messages, current_person])
+    }, [current_person])
 
     // function testing(){
     //     let obj1={
@@ -143,6 +145,7 @@ function Home() {
     }
 
     function friendSelected(naam) {
+        console.log(chat_messages) //DEBUGGING
         setCurrentPerson(naam)
     }
 

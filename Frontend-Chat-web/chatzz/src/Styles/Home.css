@@ -94,6 +94,9 @@ body{
     /* border: 1px solid brown; */
 }
 
+::-webkit-scrollbar{
+    display: none;
+}
 
 #all-contacts-container{
     display: flex;
@@ -103,9 +106,6 @@ body{
     width: 100%;
 
     border: 1px solid yellow;
-}
-::-webkit-scrollbar{
-    display: none;
 }
 
 .contact-container{
@@ -166,6 +166,9 @@ body{
     flex-direction: column;
     height: 80%;
     width: 100%;
+    overflow-y: auto;
+    
+
 
     border: 1px solid black;
 }

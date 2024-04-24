@@ -1,5 +1,6 @@
 const express = require("express")
 const app = express()
+const messageSchema = require("./Schemas/messages")
 const myroutes = require('./Routes/UserRoutes')
 const bodyParser = require('body-parser')
 const db = require("./DB/Db")
@@ -8,6 +9,7 @@ const cors = require("cors")
 
 const http = require('http');
 const socketIo = require('socket.io');
+const SendmailTransport = require("nodemailer/lib/sendmail-transport")
 
 const server = http.createServer(app);
 const io = socketIo(server, {
@@ -44,19 +46,30 @@ io.on('connection', (socket) => {
   // console.log(connectedClients)
 
   socket.on('user auth', (username) => {
-    let client_already_present = false
-    active_clients.forEach(element => {
-      if (element.username == username) {
-        client_already_present = true
-      }
-    });
+    // let client_already_present = false
 
-    if (!client_already_present) {
+    if(active_clients.find(user=>user.username===username)){
+      console.log("client already present !")
+    }
+    else{
       console.log("username is : " + username)
       clientDetails.username = username
       clientDetails.socketID = socket.id
       active_clients.push(clientDetails)
     }
+
+    // active_clients.forEach(element => {
+    //   if (element.username == username) {
+    //     client_already_present = true
+    //   }
+    // });
+
+    // if (!client_already_present) {
+    //   console.log("username is : " + username)
+    //   clientDetails.username = username
+    //   clientDetails.socketID = socket.id
+    //   active_clients.push(clientDetails)
+    // }
 
     // console.log(active_clients)
   })
@@ -68,20 +81,45 @@ io.on('connection', (socket) => {
 
   // Handle a chat message event
   socket.on('chat message', (message) => {
-    console.log('Message:', message);
+    console.log('Message:', message);  // DEBUGGING
+
+    message.time=Number(new Date()).toString()
+
+    // SENDING MESSAGE TO RECIEVER ----------------
+    if(active_clients.find(user=>user.username===message.reciever)){
+      sendMessageToClient(user.socketID, message)
+    }
+
+    // REPLICATING MESSAGE TO SENDER ---------------------
+    sendMessageToClient(socket.id, message)
+
+    console.log(active_clients)
+
+    // INSERTING MESSAGE IN THE DATABASE ------------------------
+    messageSchema.insertMany({ sender: message.sender, reciever: message.reciever, time: message.time, content: message.content }).then((r1) => {
+      console.log(`${message.sender} to ${message.reciever} : messege sent`)
+    }).catch((err) => {
+      console.log(`${message.sender} to ${message.reciever} : messege not sent`)
+      console.log(err)
+    })
+
+
+
     // Broadcast the message to all connected clients
-    io.emit('chat message', message);
+    // io.emit('chat message', message);
   });
 
-  sendMessageToClient(socket.id, 'Hello, client!, aa gya mu uthakr');
+  // sendMessageToClient(socket.id, 'Hello, client!, aa gya mu uthakr');
   // sendMessageToClient(clientId[1], 'kya be client!, kya chahiye re tereko ');
+
+
   // Handle disconnection
   socket.on('disconnect', () => {
     console.log('A client disconnected');
-    let index=active_clients.findIndex(obj => obj.username === clientDetails.username)
+    let index = active_clients.findIndex(obj => obj.username === clientDetails.username)
 
-    if(index!=-1){
-      active_clients.splice(index,1)
+    if (index != -1) {
+      active_clients.splice(index, 1)
     }
 
     console.log(active_clients)
@@ -95,7 +133,11 @@ function sendMessageToClient(socketId, message) {
   const socket = connectedClients[socketId];
   if (socket) {
     socket.emit('chat message', message);
-  } else {
+  }
+  else if(socketId==""){
+    console.log("user is offline")
+  }
+  else {
     console.log('Socket ID not found:', socketId);
   }
 }
