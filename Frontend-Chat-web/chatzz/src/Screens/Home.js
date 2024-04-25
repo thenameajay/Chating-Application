@@ -9,106 +9,79 @@ const socket = io.connect('http://localhost:8765');
 // ------------------------------------------------------------------
 
 function Home() {
-    // const names = ["ajay", "amrudh", "parth", "ravi", "patrik", "abhishek", "nitin", "naveen"]
-
-    // useEffect(()=>{
-    //     setNames(namesss)
-    // },[names2])
 
     const [user, setUser] = useState([])
-    const [current_person, setCurrentPerson] = useState()
+    const [current_person, setCurrentPerson] = useState({})
     const [chat_messages, setChatMessages] = useState([])
-    const [last_message, setLastMessage] = useState()
+
 
     // WEB SOCKET -------------------------------------------------------
 
     const [input, setInput] = useState('');
 
-    const tempObj = {
-        naam: "plyr",
-        kaam: "hacker"
-    }
-
     function sendMessage() {
         if (input !== '') {
-            // socket.emit('chat message', input);
+            console.log("all previous chat_messages ---")
+            console.log(chat_messages)
+            console.log("send button clicked")
             // socket.emit('chat message', JSON.stringify(tempObj));
-            socket.emit('chat message', { sender: loged_in_user.username, reciever: current_person.username, content: input });
-
-
-
-            // fetch("http://localhost:8765/send-message", {
-            //     method: "POST",
-            //     headers: { "Content-Type": "application/json" },
-            //     body: JSON.stringify(
-            //         { sender: loged_in_user.username, reciever: current_person.username, content: input }
-            //     )
-            // }).then((r)=>{
-            //     setInput('');
-            // })
-
-
+            socket.emit('client to server', { sender: loged_in_user.username, reciever: current_person.username, content: input });
+            // document.getElementById("message-bar").value=''
+            console.log("current person in (sendMessage)")
+            console.log(current_person)
+        }
+        else{
+            console.log("no message to send !")
         }
     };
 
 
-    useEffect(() => {
-        // showChats()
+    useEffect(() => { //USE EFFECT 1
         // Listen for incoming chat messages
-
-        // socket.emit('chat message', 'ajay_sharma')
 
         socket.emit('connection')
 
         socket.emit('user auth', loged_in_user.username)
 
-        socket.on('chat message', (message) => {
-            setChatMessages((prevMessages) => [...prevMessages, message]);
+        console.log("use effect 1 called") // for debugging
+
+        socket.on('server to client', (message) => {
+            console.log("use effect 1 --> socket.on") // debugging
             console.log(message)
-            console.log(socket.id)
+            console.log("loged in user --- ")
+            console.log(loged_in_user)
+            console.log("current person :--- ")
+            console.log(current_person)
+            if (current_person!=undefined && ((message.sender == current_person.username && message.reciever == loged_in_user.username) || (message.sender == loged_in_user.username && message.reciever == current_person.username))) {
+                // setChatMessages((prevMessages) => [...prevMessages, message]);
+                console.log("if in socket.io ---")
+                showChats()
+            }
+            console.log("current_person after if ---")
+            console.log(current_person)
         });
 
-    }, []);
+    },[]);
+
 
     // ------------------------------------------------------------------
 
-    useEffect(() => {
+    useEffect(() => { // USE EFFECT 2
         showChats()
-        console.log("second useeffect called !")
+        console.log("useeffect 2 called ! ( current person changed )")
+        console.log("current person is ------")
+        console.log(current_person)
+
     }, [current_person])
-
-    // function testing(){
-    //     let obj1={
-    //         naam:"ajay",
-    //         kaam:"developer"
-    //     }
-
-    //     let obj2={
-    //         naam:"ajay",
-    //         kaam:"developer"
-    //     }
-
-    //     if(obj1.naam===obj2.naam){
-    //         console.log("yes, they are equal ")
-    //         console.log(obj1)
-    //         console.log(obj2)
-    //     }
-    //     else{
-    //         console.log("not equal")
-    //         console.log(obj1)
-    //         console.log(obj2)
-    //     }
-    // }
 
     function showChats() {
         // HERE SENDER AND RECIEVER ARE NOT OBJECTS, THEY ARE STRINGS ----------
 
-        console.log("loged in user---")
+        console.log("(showChats) loged in user---")
         console.log(loged_in_user)
 
-        console.log("current user---")
+        console.log("(showChats) current user---")
         console.log(current_person)
-
 
         if (loged_in_user != undefined && current_person != undefined) {
 
@@ -120,11 +93,14 @@ function Home() {
                 )
             }).then((r) => {
                 r.json().then((r1) => {
-                    console.log("messages are ---")
+                    console.log("(showChats) messages are ---")
                     console.log(r1)
                     setChatMessages(r1)
                 })
             })
+        }
+        else{ //  DEGBUGGING
+            console.log("loged in user / current person is undefined")
         }
     }
 
@@ -145,8 +121,11 @@ function Home() {
     }
 
     function friendSelected(naam) {
+        console.log("(friendSelected) chat messages---") //DEBUGGING
         console.log(chat_messages) //DEBUGGING
         setCurrentPerson(naam)
+        console.log("naaam ---") //DEBUGGING
+        console.log(naam) //DEBUGGING
     }
 
     return (
