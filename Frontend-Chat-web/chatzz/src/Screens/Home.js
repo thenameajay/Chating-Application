@@ -1,19 +1,20 @@
 import "../Styles/Home.css"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import loged_in_user from "./LogedInUser"
 
 // WEB SOCKET --------------------------------------------
-import io from 'socket.io-client';
+import io, { Socket } from 'socket.io-client';
 
 const socket = io.connect('http://localhost:8765');
 // ------------------------------------------------------------------
 
 function Home() {
 
+    const [current_person, setCurrentPerson] = useState()
     const [user, setUser] = useState([])
-    const [current_person, setCurrentPerson] = useState({})
     const [chat_messages, setChatMessages] = useState([])
 
+    const cp=useRef()
 
     // WEB SOCKET -------------------------------------------------------
 
@@ -45,20 +46,24 @@ function Home() {
 
         console.log("use effect 1 called") // for debugging
 
+        // THE PROBLEM IS THAT THIS Socket.on IS RUNNING FROM THE TIME OF START AND THATS
+        // WHY IT IS TAKING VALUES OF USESTATE WHEN THIS WEB APPLICATION WAS STARTED, SO IT
+        // CAN BE SAID THAT THIS Socket.on IS CUTT OFF FROM THE REAL TIME MEMORY !!!
+
         socket.on('server to client', (message) => {
             console.log("use effect 1 --> socket.on") // debugging
             console.log(message)
             console.log("loged in user --- ")
             console.log(loged_in_user)
-            console.log("current person :--- ")
-            console.log(current_person)
-            if (current_person!=undefined && ((message.sender == current_person.username && message.reciever == loged_in_user.username) || (message.sender == loged_in_user.username && message.reciever == current_person.username))) {
+            console.log("cp :--- ")
+            console.log(cp.current)
+            if (cp.current!=undefined && ((message.sender == cp.current.username && message.reciever == loged_in_user.username) || (message.sender == loged_in_user.username && message.reciever == cp.current.username))) {
                 // setChatMessages((prevMessages) => [...prevMessages, message]);
-                console.log("if in socket.io ---")
+                console.log("if in socket.io --sss-")
                 showChats()
             }
-            console.log("current_person after if ---")
-            console.log(current_person)
+            // console.log("current_person after if ---")
+            // console.log(current_person)
         });
 
     },[]);
@@ -67,10 +72,15 @@ function Home() {
     // ------------------------------------------------------------------
 
     useEffect(() => { // USE EFFECT 2
-        showChats()
         console.log("useeffect 2 called ! ( current person changed )")
         console.log("current person is ------")
         console.log(current_person)
+        cp.current=current_person
+
+        // showChats() SHOULD BE BELOW THE cp.current=current_person LINE
+        //  BECAUSE showChats() WORKS ACCORCING TO VALLUE OF cp.current,
+        //  NOT ACCORDING TO current_person
+        showChats()
 
     }, [current_person])
 
@@ -81,15 +91,15 @@ function Home() {
         console.log(loged_in_user)
 
         console.log("(showChats) current user---")
-        console.log(current_person)
+        console.log(cp.current)
 
-        if (loged_in_user != undefined && current_person != undefined) {
+        if (loged_in_user != undefined && cp.current != undefined) {
 
             fetch("http://localhost:8765/chats", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(
-                    { sender: loged_in_user.username, reciever: current_person.username }
+                    { sender: loged_in_user.username, reciever: cp.current.username }
                 )
             }).then((r) => {
                 r.json().then((r1) => {
