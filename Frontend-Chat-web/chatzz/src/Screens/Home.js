@@ -1,6 +1,7 @@
 import "../Styles/Home.css"
 import { useEffect, useState, useRef } from "react"
 import loged_in_user from "./LogedInUser"
+import { useNavigate } from "react-router-dom"
 
 // WEB SOCKET --------------------------------------------
 import io, { Socket } from 'socket.io-client';
@@ -15,6 +16,8 @@ function Home() {
     const [chat_messages, setChatMessages] = useState([])
 
     const cp=useRef()
+    const navigate = useNavigate()
+    const screen_width_exceeds = window.matchMedia('(min-width:530px)').matches
 
     // WEB SOCKET -------------------------------------------------------
 
@@ -22,14 +25,9 @@ function Home() {
 
     function sendMessage() {
         if (input !== '') {
-            console.log("all previous chat_messages ---")
-            console.log(chat_messages)
-            console.log("send button clicked")
             // socket.emit('chat message', JSON.stringify(tempObj));
             socket.emit('client to server', { sender: loged_in_user.username, reciever: current_person.username, content: input });
-            // document.getElementById("message-bar").value=''
-            console.log("current person in (sendMessage)")
-            console.log(current_person)
+            document.getElementById("message-bar").value=''
         }
         else{
             console.log("no message to send !")
@@ -40,30 +38,24 @@ function Home() {
     useEffect(() => { //USE EFFECT 1
         // Listen for incoming chat messages
 
+        if(Object.keys(loged_in_user).length===0){
+            navigate('/login')
+        }
+
         socket.emit('connection')
 
         socket.emit('user auth', loged_in_user.username)
 
-        console.log("use effect 1 called") // for debugging
-
         // THE PROBLEM IS THAT THIS Socket.on IS RUNNING FROM THE TIME OF START AND THATS
         // WHY IT IS TAKING VALUES OF USESTATE WHEN THIS WEB APPLICATION WAS STARTED, SO IT
         // CAN BE SAID THAT THIS Socket.on IS CUTT OFF FROM THE REAL TIME MEMORY !!!
+        // THE PROBLEM IS SOLVED BY USING 'useRef()' IN THE CODE !
 
         socket.on('server to client', (message) => {
-            console.log("use effect 1 --> socket.on") // debugging
-            console.log(message)
-            console.log("loged in user --- ")
-            console.log(loged_in_user)
-            console.log("cp :--- ")
-            console.log(cp.current)
             if (cp.current!=undefined && ((message.sender == cp.current.username && message.reciever == loged_in_user.username) || (message.sender == loged_in_user.username && message.reciever == cp.current.username))) {
-                // setChatMessages((prevMessages) => [...prevMessages, message]);
                 console.log("if in socket.io --sss-")
                 showChats()
             }
-            // console.log("current_person after if ---")
-            // console.log(current_person)
         });
 
     },[]);
@@ -121,7 +113,7 @@ function Home() {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(
-                { searched_username }
+                { searched_username:searched_username, searcher:loged_in_user.username }
             )
         }).then((r1) => {
             r1.json().then((r2) => {
@@ -131,11 +123,23 @@ function Home() {
     }
 
     function friendSelected(naam) {
-        console.log("(friendSelected) chat messages---") //DEBUGGING
-        console.log(chat_messages) //DEBUGGING
+
         setCurrentPerson(naam)
-        console.log("naaam ---") //DEBUGGING
-        console.log(naam) //DEBUGGING
+        
+        //  CODE FOR RESPONSIVENESS----------------------------------------
+
+        if(!screen_width_exceeds){
+            document.getElementById("all-contacts").style.display="none"
+            document.getElementById("chating-space").style.display="flex"
+        }
+
+        //----------------------------------------------------------------
+    }
+
+    function backToContacts(){
+        document.getElementById("all-contacts").style.display="flex"
+        document.getElementById("chating-space").style.display="none"
+        console.log("you are in contacts section now !")
     }
 
     return (
@@ -146,7 +150,7 @@ function Home() {
                 </nav>
 
                 <nav id="user-bar" class="navbars">
-                    <a>{loged_in_user.username}</a>
+                    <a>{loged_in_user===undefined?'':loged_in_user.name}</a>
                 </nav>
 
                 <div id="search-div">
@@ -164,7 +168,7 @@ function Home() {
                                 </div>
 
                                 <div className="contact-body" >
-                                    {naam.name}
+                                    {naam.username}
                                 </div>
                             </div>
                         )
@@ -174,7 +178,12 @@ function Home() {
 
             <div id="chating-space">
                 <nav id="chating-space-navbar" class="navbars">
-                    <h2 id="chating-space-navbar-heading">{current_person == undefined ? "" : current_person.name}</h2>
+                    <div id="back-btn-div">
+                        <button id="back-btn" onClick={()=>backToContacts()}>&larr;</button>
+                    </div>
+                    <div id="chating-space-navbar-heading-div">
+                        <h2 id="chating-space-navbar-heading">{current_person == undefined ? "" : current_person.name}</h2>
+                    </div>
                 </nav>
 
                 <div id="chat-messages">
@@ -203,7 +212,7 @@ function Home() {
                     <input id="message-bar" type="text" onChange={(e) => setInput(e.target.value.trim())} placeholder="Type a message..." />
                     {/* error ho to uper se .trim() hta dena */}
                     {/* uper se if input!='' hta dena */}
-                    <button id="send-btn" onClick={() => sendMessage()} >SEND</button>
+                    <button id="send-btn" onClick={() => sendMessage()} >&#10147;</button>
                 </div>
             </div>
         </main>

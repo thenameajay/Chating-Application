@@ -20,6 +20,8 @@ function Login() {
                 { name, username, email, password  }
             )
         })
+        
+        switchLoginRegister("register")
     }
 
     function verification(){
@@ -80,7 +82,7 @@ function Login() {
                     <input type="text" name="username" id="username-register" placeholder="Username" required />
                     <input type="email" name="email" id="email" placeholder="Email Address" required />
                     <input type="password" name="password" id="password-register" placeholder="Create Password" required />
-                    <button class="form-btn" onClick={()=>getNewUserDetails()}>VERIFY OTP</button>
+                    <button class="form-btn" onClick={()=>getNewUserDetails()}>REGISTER</button>
                     {/* <input type="text" name="otp" placeholder="Enter OTP" required />
                     <button class="form-btn">REGISTER</button> */}
                 </div>

@@ -243,13 +243,17 @@ exports.showMessages = (req, res) => {
 }
 
 exports.searchUser = (req, res) => {
-    const { searched_username } = req.body
+    const { searched_username, searcher } = req.body
 
     if (searched_username == "all") {
-        userSchema.find().then((r1) => {
+        userSchema.find({username : {$ne : searcher}}).then((r1) => {
             console.log(r1)
             res.send(r1)
         })
+    }
+    else if(searched_username==searcher){
+        console.log("its you, you searched yourself !")
+        res.send("This account belongs to you !")
     }
     else {
         userSchema.find({ username: searched_username }).then((r1) => {

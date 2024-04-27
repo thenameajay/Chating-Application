@@ -38,7 +38,7 @@ body{
     align-items: center;
     height: 10%;
     width: 100%;
-    background-color: rgb(21 13 44 / 79%);
+    background-color: rgb(55 56 57 / 84%);
 
     /* border: 1px solid green; */
 }
@@ -51,7 +51,7 @@ body{
 #user-bar{
     display: flex;
     flex-direction: row;
-    background-color: rgb(3 3 6 / 83%);
+    background-color: rgb(255 255 255 / 22%);
     /* border: 1px solid green; */
     width: 100%;
     height: 5%;
@@ -79,12 +79,12 @@ body{
     color: white;
     height: 50%;
     width: 75%;
-    background-color: #4b19419e;
+    background-color: #3f3d3e9e;
     border-radius: 10px;
 }
 
 #search-bar:hover{
-    background-color: #2e0d279e;
+    background-color: #2c2b2b9e;
 }
 
 #search-btn{
@@ -92,10 +92,15 @@ body{
     flex-direction: row; */
     height: 50%;
     width: 15%;
-    background-color: rgb(3 3 3 / 24%);
+    background-color: rgb(143 142 142 / 31%);
     color: white;
 
     /* border: 1px solid brown; */
+}
+
+#search-btn:hover{
+    background-color: rgba(95, 94, 94, 0.31);
+    cursor: pointer;
 }
 
 ::-webkit-scrollbar{
@@ -119,15 +124,17 @@ body{
     flex-direction: row;
     align-items: center;
     justify-content: space-evenly;
-    height: 20%;
+    height: auto;
     width: 100%;
-    background-color: #220511a8;
+    background-color: #6b6b6b4f;
+    margin-bottom: 2px;
 
-    border: 1px solid violet;
+    border-bottom: 1px solid gray;
+    /* border-top: 1px solid gray; */
 }
 
 .contact-container:hover{
-    background-color: #7e5b6a9e;
+    background-color: #6360619c;
 }
 
 .contact-dp{
@@ -136,15 +143,17 @@ body{
     height: 95%;
     width: 30%;
 
-    border: 1px solid purple;
+    border: 1px solid gray;
 }
 
 .contact-body{
     /* display: flex;
     flex-direction: row; */
-    height: 90%;
+    height: 60px;
     width: 65%;
     color: white;
+    padding-left: 4px;
+    padding-top: 1px;
 
     /* border: 1px solid maroon; */
 }
@@ -165,6 +174,10 @@ body{
 
 #chating-space-navbar-heading{
     color: white;
+    margin: 0px;
+}
+#back-btn-div{
+    display: none;
 }
 
 #chat-messages{
@@ -195,7 +208,7 @@ body{
     max-width: 70%;
     min-width: 20%;
     margin: 1% 2%;
-    background-color: #160a14b3;
+    background-color: #dbd3d92b;
     border-radius: 20px;
 }
 
@@ -232,15 +245,58 @@ body{
 #message-bar{
     height: 70%;
     width: 75%;
-    background-color: #160a14b3;
+    background-color: #000000b3;
     color: white;
     border-radius: 10px;
+    font-size: 130%;
 }
 
 #send-btn{
     height: 70%;
     width: 15%;
     color: white;
-    background-color: #160a14b3;
+    background-color: #1c1b1cb5;
     border-radius: 10px;
+    font-size: 200%;
+    padding: 0px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+#send-btn:hover{
+    background-color: #353435b5;
+    cursor: pointer;
+}
+
+/* RESPONSIVE CSS ---------------------------------- */
+
+@media screen and (max-width:530px){
+    #all-contacts{
+        width: 100%;
+    }
+    #chating-space{
+        display: none;
+        width: 100%;
+    }
+    #chating-space-navbar-heading-div{
+        width: 85%;
+        display: flex;
+        justify-content: center;
+    }
+    #back-btn-div{
+        display: flex;
+        width: 15%;
+        justify-content: center;
+    }
+    #back-btn{
+        color: white;
+        background-color: #24242500;
+        border: 0px;
+        font-size: 15px;
+    }
+    #back-btn:hover{
+        background-color: #3a3a3b8a;
+        cursor: pointer;
+    }
 }

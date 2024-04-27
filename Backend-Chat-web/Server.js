@@ -64,7 +64,7 @@ io.on('connection', (socket) => {
 // NEW CODE FOR BETTER EFFICIENCY ----------------------------
   socket.on('client to server', (message) => {    // CLIENT TO SERVER
     console.log("message recieved")
-    message.time=Number(new Date()).toString()
+    message.time=(new Date()).toString().slice(4,21)
 
     // SENDING MESSAGE TO RECIEVER ----------------
     let user = active_clients.find(user=>user.username===message.reciever)
@@ -92,44 +92,6 @@ io.on('connection', (socket) => {
 // -----------------------------------------------------------
 
 
-
-
-
-
-
-  // // Handle a chat message event
-  // socket.on('chat message', (message) => {
-  //   console.log('Message:', message);  // DEBUGGING
-
-  //   message.time=Number(new Date()).toString()
-
-  //   // SENDING MESSAGE TO RECIEVER ----------------
-  //   let user = active_clients.find(user=>user.username===message.reciever)
-  //   if(user!=undefined){
-  //     sendMessageToClient(user.socketID, message)
-  //   }
-  //   else{
-  //     console.log("user is offline")
-  //   }
-
-  //   // REPLICATING MESSAGE TO SENDER ---------------------
-  //   sendMessageToClient(socket.id, message)
-
-  //   console.log(active_clients)
-
-  //   // INSERTING MESSAGE IN THE DATABASE ------------------------
-  //   messageSchema.insertMany({ sender: message.sender, reciever: message.reciever, time: message.time, content: message.content }).then((r1) => {
-  //     console.log(`${message.sender} to ${message.reciever} : messege sent`)
-  //   }).catch((err) => {
-  //     console.log(`${message.sender} to ${message.reciever} : messege not sent`)
-  //     console.log(err)
-  //   })
-
-
-
-  //   // Broadcast the message to all connected clients
-  //   // io.emit('chat message', message);
-  // });
 
   // Handle disconnection
   socket.on('disconnect', () => {
