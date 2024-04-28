@@ -1,4 +1,5 @@
 import "../Styles/Home.css"
+import logoImage from "../Images/cloverLogo.png"
 import { useEffect, useState, useRef } from "react"
 import loged_in_user from "./LogedInUser"
 import { useNavigate } from "react-router-dom"
@@ -146,7 +147,8 @@ function Home() {
         <main id="home-outer-div">
             <div id="all-contacts">
                 <nav id="all-contacts-navbar" class="navbars">
-                    <a>CHATZ</a>
+                    <img id="logo-img" src={logoImage} />
+                    <a>CLOVER</a>
                 </nav>
 
                 <nav id="user-bar" class="navbars">
