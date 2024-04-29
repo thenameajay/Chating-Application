@@ -9,7 +9,7 @@ const cors = require("cors")
 
 const http = require('http');
 const socketIo = require('socket.io');
-// const SendmailTransport = require("nodemailer/lib/sendmail-transport")
+
 
 const server = http.createServer(app);
 const io = socketIo(server, {

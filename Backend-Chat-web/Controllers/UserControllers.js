@@ -3,9 +3,15 @@ const otpSchema = require("../Schemas/otp")
 const messageSchema = require("../Schemas/messages")
 const newUserSchema = require("../Schemas/newUser")
 const nodemailer = require('nodemailer')
+var smtpTransport = require('nodemailer-smtp-transport');
 const bcrypt = require('bcrypt')
+require("dotenv").config()
+
+const mailId=process.env.MY_MAIL_ID
+const pswd=process.env.APP_PASSWORD
 
 // for email-------------------------------------------
+
 const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
     port: 465,
@@ -15,6 +21,7 @@ const transporter = nodemailer.createTransport({
         pass: process.env.APP_PASSWORD,
     },
 })
+
 // --------------------------------------------------------
 
 // USER REGISTRATATION-------------------
@@ -274,21 +281,17 @@ exports.searchUser = (req, res) => {
 
 exports.mailTest = (req, res) => {
     const { email } = req.body
+    console.log(mailId)
+    console.log(pswd)
+    console.log(typeof mailId)
+    console.log(typeof pswd)
+
     transporter.sendMail({
-        from: `"Weathering"<${process.env.MY_MAIL_ID}>`,
+        from: `"CLOVER"<${process.env.MY_MAIL_ID}>`,
         to: email,
         subject: "OTP verification",
         text: "OTP mail",
-        html: `
-        <div style="background-color:white">
-            <br/>
-            Please ignore if it not belongs to you and never share otp with anyone.
-            <br/>
-            Thank You for Registering.
-            <br/>
-            Team Weathering
-        </div>
-        `
+        html: "<h1>yesss</h1>"
 
     }).then((r) => {
         console.log("mail sended successfully")
