@@ -3,12 +3,8 @@ const otpSchema = require("../Schemas/otp")
 const messageSchema = require("../Schemas/messages")
 const newUserSchema = require("../Schemas/newUser")
 const nodemailer = require('nodemailer')
-var smtpTransport = require('nodemailer-smtp-transport');
 const bcrypt = require('bcrypt')
 require("dotenv").config()
-
-const mailId=process.env.MY_MAIL_ID
-const pswd=process.env.APP_PASSWORD
 
 // for email-------------------------------------------
 
@@ -30,31 +26,26 @@ exports.addUser = (req, res) => {
 
     const { name, username, email, password } = req.body;
 
-    console.log(name)
-    console.log(username)
-    console.log(email)
-    console.log(password)
-
     userSchema.find({ email: email }).then((rslt) => {
         if (rslt.length == 0) {
 
             const otp = Math.floor(Math.random() * 1000000).toString()
 
             transporter.sendMail({
-                from: `"Weathering"<${process.env.MY_MAIL_ID}>`,
+                from: `"CLOVER"<${process.env.MY_MAIL_ID}>`,
                 to: email,
                 subject: "OTP verification",
                 text: "OTP mail",
                 html: `
                 <div style="background-color:white">
                     <h2 style="color:black">Hello ${name} </h2>
-                    Your OTP for registering to Weathering is ${otp} .
+                    Your OTP for registering to CLOVER is ${otp} .
                     <br/>
                     Please ignore if it not belongs to you and never share otp with anyone.
                     <br/>
                     Thank You for Registering.
                     <br/>
-                    Team Weathering
+                    Team CLOVER
                 </div>
                 `
 
@@ -227,7 +218,7 @@ exports.sendMessage = (req, res) => {
     const { sender, reciever, content } = req.body;
 
     messageSchema.insertMany({ sender: sender, reciever: reciever, time: Number(new Date()), content: content }).then((r1) => {
-        console.log(`${sender} to ${reciever} : messege sent`)
+        // console.log(`${sender} to ${reciever} : messege sent`)
         res.send("message sent")
     }).catch((err) => {
         console.log(`${sender} to ${reciever} : messege not sent`)
@@ -242,9 +233,9 @@ exports.showMessages = (req, res) => {
     const { sender, reciever } = req.body;
 
     messageSchema.find({ $or: [{ sender: sender, reciever: reciever }, { sender: reciever, reciever: sender }] }).then((r1) => {
-        r1.forEach(element => {
-            console.log(`${element.sender} : ${element.content}`)
-        });
+        // r1.forEach(element => {
+        //     console.log(`${element.sender} : ${element.content}`)
+        // });
         res.send(r1)
     })
 }
@@ -254,7 +245,7 @@ exports.searchUser = (req, res) => {
 
     if (searched_username == "all") {
         userSchema.find({username : {$ne : searcher}}).then((r1) => {
-            console.log(r1)
+            // console.log(r1)
             res.send(r1)
         })
     }
@@ -265,7 +256,7 @@ exports.searchUser = (req, res) => {
     else {
         userSchema.find({ username: searched_username }).then((r1) => {
             if (r1.length != 0) {
-                console.log("user found : " + r1)
+                // console.log("user found : " + r1)
                 res.send(r1)
             }
             else {
@@ -279,68 +270,68 @@ exports.searchUser = (req, res) => {
 
 // FOR DEBUGGING -----------------------------------------------------------------
 
-exports.mailTest = (req, res) => {
-    const { email } = req.body
-    console.log(mailId)
-    console.log(pswd)
-    console.log(typeof mailId)
-    console.log(typeof pswd)
+// exports.mailTest = (req, res) => {
+//     const { email } = req.body
+//     console.log(mailId)
+//     console.log(pswd)
+//     console.log(typeof mailId)
+//     console.log(typeof pswd)
 
-    transporter.sendMail({
-        from: `"CLOVER"<${process.env.MY_MAIL_ID}>`,
-        to: email,
-        subject: "OTP verification",
-        text: "OTP mail",
-        html: "<h1>yesss</h1>"
+//     transporter.sendMail({
+//         from: `"CLOVER"<${process.env.MY_MAIL_ID}>`,
+//         to: email,
+//         subject: "OTP verification",
+//         text: "OTP mail",
+//         html: "<h1>yesss</h1>"
 
-    }).then((r) => {
-        console.log("mail sended successfully")
-        res.send("tested OK")
-    }).catch((err) => {
-        console.log("mail not sent")
-        console.log(err)
-        res.send("testing unsuccessfull")
-    })
-}
+//     }).then((r) => {
+//         console.log("mail sended successfully")
+//         res.send("tested OK")
+//     }).catch((err) => {
+//         console.log("mail not sent")
+//         console.log(err)
+//         res.send("testing unsuccessfull")
+//     })
+// }
 
 // ---------------------------------------------------------------------
 
-exports.indipendentAccountCreation = (req, res) => {
-    const { name, username, email, password } = req.body
+// exports.indipendentAccountCreation = (req, res) => {
+//     const { name, username, email, password } = req.body
 
-    userSchema.find({ username: username }).then((r) => {
-        if (r.length != 0) {
-            console.log("user already existed")
-            res.send("this username is already taken")
-        }
-        else {
-            bcrypt.genSalt(10, function (err, salt) {
-                if (err) {
-                    console.log("Error in Encryption salt generation !")
-                    res.send("Error in Encryption salt generation !")
-                }
-                else {
-                    bcrypt.hash(password, salt, function (err, hash) {
-                        if (err) {
-                            console.log("Error in Encryption hash Generation ! (indipendent account)")
-                        }
-                        else {
-                            encrptPassword = hash
-                            userSchema.insertMany({ name: name, username: username, email: email, password: encrptPassword }).then((r1) => {
-                                console.log("data storation : SUCCESSFULL ")
-                                res.send("data stored successfully")
-                            }).catch((err) => {
-                                console.log("error in storing data (indipendent account)")
-                                console.log(err)
-                            })
-                        }
-                    })
-                }
-            })
-        }
-    }).catch((err) => {
-        console.log("error in indipendent account creation !")
-        res.send("error in indipendent account creation !")
-        console.log(err)
-    })
-}
+//     userSchema.find({ username: username }).then((r) => {
+//         if (r.length != 0) {
+//             console.log("user already existed")
+//             res.send("this username is already taken")
+//         }
+//         else {
+//             bcrypt.genSalt(10, function (err, salt) {
+//                 if (err) {
+//                     console.log("Error in Encryption salt generation !")
+//                     res.send("Error in Encryption salt generation !")
+//                 }
+//                 else {
+//                     bcrypt.hash(password, salt, function (err, hash) {
+//                         if (err) {
+//                             console.log("Error in Encryption hash Generation ! (indipendent account)")
+//                         }
+//                         else {
+//                             encrptPassword = hash
+//                             userSchema.insertMany({ name: name, username: username, email: email, password: encrptPassword }).then((r1) => {
+//                                 console.log("data storation : SUCCESSFULL ")
+//                                 res.send("data stored successfully")
+//                             }).catch((err) => {
+//                                 console.log("error in storing data (indipendent account)")
+//                                 console.log(err)
+//                             })
+//                         }
+//                     })
+//                 }
+//             })
+//         }
+//     }).catch((err) => {
+//         console.log("error in indipendent account creation !")
+//         res.send("error in indipendent account creation !")
+//         console.log(err)
+//     })
+// }

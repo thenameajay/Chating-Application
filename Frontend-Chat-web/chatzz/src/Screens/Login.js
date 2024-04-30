@@ -11,21 +11,37 @@ function Login() {
         let username=document.getElementById("username-register").value
         let email=document.getElementById("email").value
         let password=document.getElementById("password-register").value
-        // console.log(name)
         
-        fetch("http://localhost:8765/create-indipendent-account", {
+        fetch("http://localhost:8765/register", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(
                 { name, username, email, password  }
             )
         })
-        
-        switchLoginRegister("register")
+    }
+
+    function otpVerification(){
+        const email = document.getElementById("email").value
+        const userEnteredOtp = document.getElementById("otp").value
+
+        fetch("http://localhost:8765/register/otp-verification", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(
+                { email, userEnteredOtp }
+            )
+        }).then((r)=>{
+            if(r.status===200){
+                switchLoginRegister("register")
+            }
+            else{
+                document.getElementById("otp-warning").style.display="flex"
+            }
+        })
     }
 
     function verification(){
-        console.log("verificationn called")
         const username = document.getElementById("username-login").value
         const password = document.getElementById("password").value
 
@@ -43,8 +59,10 @@ function Login() {
                     loged_in_user.username=r1.Object.username
                     loged_in_user.email=r1.Object.email
 
-                    console.log(loged_in_user)
                     navigate('/home')
+                }
+                else{
+                    document.getElementById("credential-warning").style.display="flex"
                 }
             })
         })     
@@ -66,6 +84,7 @@ function Login() {
             <div class="form-container" id="login-container">
                 <h2>Login</h2>
                 <div id="login-form">
+                <label class="warnings" id="credential-warning" >Invalid USERNAME OR PASSWORD</label>
                     <input type="email" id="username-login" placeholder="Username" required />
                     <input type="password" id="password" placeholder="Password" required />
                     <button class="form-btn" onClick={()=>verification()}>LOGIN</button>
@@ -82,9 +101,10 @@ function Login() {
                     <input type="text" name="username" id="username-register" placeholder="Username" required />
                     <input type="email" name="email" id="email" placeholder="Email Address" required />
                     <input type="password" name="password" id="password-register" placeholder="Create Password" required />
-                    <button class="form-btn" onClick={()=>getNewUserDetails()}>REGISTER</button>
-                    {/* <input type="text" name="otp" placeholder="Enter OTP" required />
-                    <button class="form-btn">REGISTER</button> */}
+                    <button class="form-btn" onClick={()=>getNewUserDetails()}>GET OTP</button>
+                    <label class="warnings" id="otp-warning">Invalid OTP</label>
+                    <input type="text" id="otp" name="otp" placeholder="Enter OTP" required />
+                    <button class="form-btn" onClick={()=>otpVerification()}>REGISTER</button>
                 </div>
                 <div class="switch">
                     <span>Already have an account?</span> <a onClick={()=>switchLoginRegister("register")}>Login</a>

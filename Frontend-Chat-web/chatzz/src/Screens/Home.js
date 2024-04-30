@@ -30,9 +30,6 @@ function Home() {
             socket.emit('client to server', { sender: loged_in_user.username, reciever: current_person.username, content: input });
             document.getElementById("message-bar").value=''
         }
-        else{
-            console.log("no message to send !")
-        }
     };
 
 
@@ -54,37 +51,34 @@ function Home() {
 
         socket.on('server to client', (message) => {
             if (cp.current!=undefined && ((message.sender == cp.current.username && message.reciever == loged_in_user.username) || (message.sender == loged_in_user.username && message.reciever == cp.current.username))) {
-                console.log("if in socket.io --sss-")
                 showChats()
             }
         });
 
     },[]);
 
+    useEffect(()=>{
+        let all_messages=document.getElementById("chat-messages")
+        all_messages.scrollTop=all_messages.scrollHeight
+    },[chat_messages])
+
 
     // ------------------------------------------------------------------
 
     useEffect(() => { // USE EFFECT 2
-        console.log("useeffect 2 called ! ( current person changed )")
-        console.log("current person is ------")
-        console.log(current_person)
+
         cp.current=current_person
 
         // showChats() SHOULD BE BELOW THE cp.current=current_person LINE
         //  BECAUSE showChats() WORKS ACCORCING TO VALLUE OF cp.current,
         //  NOT ACCORDING TO current_person
+
         showChats()
 
     }, [current_person])
 
     function showChats() {
         // HERE SENDER AND RECIEVER ARE NOT OBJECTS, THEY ARE STRINGS ----------
-
-        console.log("(showChats) loged in user---")
-        console.log(loged_in_user)
-
-        console.log("(showChats) current user---")
-        console.log(cp.current)
 
         if (loged_in_user != undefined && cp.current != undefined) {
 
@@ -96,14 +90,9 @@ function Home() {
                 )
             }).then((r) => {
                 r.json().then((r1) => {
-                    console.log("(showChats) messages are ---")
-                    console.log(r1)
                     setChatMessages(r1)
                 })
             })
-        }
-        else{ //  DEGBUGGING
-            console.log("loged in user / current person is undefined")
         }
     }
 
@@ -140,7 +129,6 @@ function Home() {
     function backToContacts(){
         document.getElementById("all-contacts").style.display="flex"
         document.getElementById("chating-space").style.display="none"
-        console.log("you are in contacts section now !")
     }
 
     return (

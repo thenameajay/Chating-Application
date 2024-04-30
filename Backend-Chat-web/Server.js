@@ -49,7 +49,7 @@ io.on('connection', (socket) => {
       console.log("client already present !")
     }
     else{
-      console.log("username is : " + username)
+      // console.log("username is : " + username)
       clientDetails.username = username
       clientDetails.socketID = socket.id
       active_clients.push(clientDetails)
@@ -57,13 +57,9 @@ io.on('connection', (socket) => {
     // console.log(active_clients)
   })
 
-
-
-
-
 // NEW CODE FOR BETTER EFFICIENCY ----------------------------
   socket.on('client to server', (message) => {    // CLIENT TO SERVER
-    console.log("message recieved")
+    // console.log("message recieved")
     message.time=(new Date()).toString().slice(4,21)
 
     // SENDING MESSAGE TO RECIEVER ----------------
@@ -78,11 +74,12 @@ io.on('connection', (socket) => {
     // REPLICATING MESSAGE TO SENDER ---------------------
     sendMessageToClient('server to client', socket.id, message)
 
-    console.log(active_clients)
+    // console.log(active_clients)
 
     // INSERTING MESSAGE IN THE DATABASE ------------------------
     messageSchema.insertMany({ sender: message.sender, reciever: message.reciever, time: message.time, content: message.content }).then((r1) => {
-      console.log(`${message.sender} to ${message.reciever} : messege sent`)
+      // console.log(`${message.sender} to ${message.reciever} : messege sent`)
+      console.log("message transfered : SUCCESSFULL")
     }).catch((err) => {
       console.log(`${message.sender} to ${message.reciever} : messege not sent`)
       console.log(err)
@@ -102,7 +99,7 @@ io.on('connection', (socket) => {
       active_clients.splice(index, 1)
     }
 
-    console.log(active_clients)
+    // console.log(active_clients)
 
     delete connectedClients[socket.id];
   });

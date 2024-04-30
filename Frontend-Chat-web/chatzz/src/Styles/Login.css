@@ -46,6 +46,7 @@
     color: #fff;
     cursor: pointer;
     transition: background-color 0.3s;
+    margin-bottom: 10px;
 }
 .form-container input[type="submit"]:hover {
     background-color: #0056b3;
@@ -57,4 +58,17 @@
 .form-container .switch a {
     color: #007bff;
     text-decoration: none;
+}
+
+.warnings{
+    display: none;
+    height: auto;
+    width: auto;
+    color: red;
+}
+
+@media screen and (max-width:530px){
+    .form-container{
+        width: 80%;
+    }
 }
