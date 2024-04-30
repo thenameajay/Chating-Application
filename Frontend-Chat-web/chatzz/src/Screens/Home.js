@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom"
 // WEB SOCKET --------------------------------------------
 import io, { Socket } from 'socket.io-client';
 
-const socket = io.connect('http://localhost:8765');
+const socket = io.connect(`${process.env.REACT_APP_BACKEND_URL}`);
 // ------------------------------------------------------------------
 
 function Home() {
@@ -82,7 +82,7 @@ function Home() {
 
         if (loged_in_user != undefined && cp.current != undefined) {
 
-            fetch("http://localhost:8765/chats", {
+            fetch(`${process.env.REACT_APP_BACKEND_URL}/chats`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(
@@ -99,7 +99,7 @@ function Home() {
 
     function getUsers() {
         let searched_username = document.getElementById("search-bar").value
-        fetch("http://localhost:8765/search-user", {
+        fetch(`${process.env.REACT_APP_BACKEND_URL}/search-user`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(

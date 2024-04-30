@@ -12,7 +12,7 @@ function Login() {
         let email=document.getElementById("email").value
         let password=document.getElementById("password-register").value
         
-        fetch("http://localhost:8765/register", {
+        fetch(`${process.env.REACT_APP_BACKEND_URL}/register`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(
@@ -25,7 +25,7 @@ function Login() {
         const email = document.getElementById("email").value
         const userEnteredOtp = document.getElementById("otp").value
 
-        fetch("http://localhost:8765/register/otp-verification", {
+        fetch(`${process.env.REACT_APP_BACKEND_URL}/register/otp-verification`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(
@@ -45,7 +45,7 @@ function Login() {
         const username = document.getElementById("username-login").value
         const password = document.getElementById("password").value
 
-        fetch("http://localhost:8765/login", {
+        fetch(`${process.env.REACT_APP_BACKEND_URL}/login`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(
