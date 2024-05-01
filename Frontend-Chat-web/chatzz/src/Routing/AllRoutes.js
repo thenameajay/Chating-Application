@@ -1,6 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 import Home from "../Screens/Home";
 import Login from "../Screens/Login";
+import Info from "../Screens/Info";
 
 function AllRoutes() {
 
@@ -10,6 +11,7 @@ function AllRoutes() {
                 <Route path='/' element={<Login />} />
                 <Route path='/home' element={<Home />} />
                 <Route path='/login' element={<Login />} />
+                <Route path='/info' element={<Info />} />
             </Routes>
         </>
     )

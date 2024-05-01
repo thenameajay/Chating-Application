@@ -101,6 +101,7 @@ font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
     width: 15%;
     background-color: rgb(143 142 142 / 31%);
     color: white;
+    border-radius: 5px;
 
     /* border: 1px solid brown; */
 }
@@ -306,5 +307,8 @@ font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
     #back-btn:hover{
         background-color: #3a3a3b8a;
         cursor: pointer;
+    }
+    .message{
+        font-size: 130%;
     }
 }

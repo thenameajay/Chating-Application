@@ -188,8 +188,8 @@ exports.login = (req, res) => {
 
     userSchema.find({ username: username }).then((r1) => {
         if (r1.length == 0) {
-            res.send("no such user exists")
             console.log("no such user exists")
+            res.status(404).send({ status: 404, message: "No such user Exists" })
         }
         else {
             bcrypt.compare(password, r1[0].password, function (err, status) {
@@ -231,27 +231,35 @@ exports.sendMessage = (req, res) => {
 
 exports.showMessages = (req, res) => {
     const { sender, reciever } = req.body;
-
+    
     messageSchema.find({ $or: [{ sender: sender, reciever: reciever }, { sender: reciever, reciever: sender }] }).then((r1) => {
         // r1.forEach(element => {
         //     console.log(`${element.sender} : ${element.content}`)
         // });
         res.send(r1)
+    }).catch((err)=>{
+        console.log("Error in showing messages !")
+        console.log(err)
+        res.status(406).send({ status: 406, message: "Inappropriate Request !" })
     })
 }
 
 exports.searchUser = (req, res) => {
     const { searched_username, searcher } = req.body
 
-    if (searched_username == "all") {
+    if (searched_username.toString().toLowerCase() == "all") {
         userSchema.find({username : {$ne : searcher}}).then((r1) => {
             // console.log(r1)
             res.send(r1)
+        }).catch((err)=>{
+            console.log("Error in searching user !")
+            console.log(err)
+            res.status(406).send({ status: 406, message: "Something went wrong" })
         })
     }
     else if(searched_username==searcher){
         console.log("its you, you searched yourself !")
-        res.send("This account belongs to you !")
+        res.status(400).send({ status: 400, message: "This account belongs to you !" })
     }
     else {
         userSchema.find({ username: searched_username }).then((r1) => {
@@ -261,8 +269,12 @@ exports.searchUser = (req, res) => {
             }
             else {
                 console.log("no such user found")
-                res.send("no user found")
+                res.status(404).send({ status: 404, message: "no user found" })
             }
+        }).catch((err)=>{
+            console.log("Error in searching user !")
+            console.log(err)
+            res.status(406).send({ status: 406, message: "Something went wrong" })
         })
     }
 }

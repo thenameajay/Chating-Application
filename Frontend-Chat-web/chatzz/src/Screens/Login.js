@@ -84,7 +84,7 @@ function Login() {
             <div class="form-container" id="login-container">
                 <h2>Login</h2>
                 <div id="login-form">
-                <label class="warnings" id="credential-warning" >Invalid USERNAME OR PASSWORD</label>
+                <label class="warnings" id="credential-warning" >Invalid USERNAME or PASSWORD</label>
                     <input type="email" id="username-login" placeholder="Username" required />
                     <input type="password" id="password" placeholder="Password" required />
                     <button class="form-btn" onClick={()=>verification()}>LOGIN</button>

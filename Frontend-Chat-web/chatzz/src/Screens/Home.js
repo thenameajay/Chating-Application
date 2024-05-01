@@ -107,10 +107,16 @@ function Home() {
             )
         }).then((r1) => {
             r1.json().then((r2) => {
-                setUser(r2)
+                if(r1.status!==404){
+                    setUser(r2)
+                }
             })
         })
     }
+// FUTURE FEATURES------------------------------------------------------------------
+    // function deleteMessage(){
+
+    // }
 
     function friendSelected(naam) {
 
@@ -136,7 +142,7 @@ function Home() {
             <div id="all-contacts">
                 <nav id="all-contacts-navbar" class="navbars">
                     <img id="logo-img" src={logoImage} />
-                    <a>CLOVER</a>
+                    <a href="/info" style={{textDecoration:"none", padding:"0px"}}>CLOVER</a>
                 </nav>
 
                 <nav id="user-bar" class="navbars">
@@ -144,7 +150,7 @@ function Home() {
                 </nav>
 
                 <div id="search-div">
-                    <input type="search" id="search-bar" placeholder="Search" />
+                    <input type="search" id="search-bar" placeholder="Search Username" />
                     <button id="search-btn" onClick={() => getUsers()}>GO</button>
                 </div>
 
@@ -180,6 +186,10 @@ function Home() {
                     {
                         chat_messages.map((msg) =>
                             <div class="message-cell" style={msg.sender == loged_in_user.username ? { flexDirection: "row-reverse" } : { flexDirection: "row" }}>
+                                {/* <div class="delete-msg-div">
+                                    &#xe020;
+                                </div> */}
+
                                 <div class="message-body" >
                                     <div class="sender-name" style={msg.sender == loged_in_user.username ? { flexDirection: "row-reverse" } : { flexDirection: "row" }}>
                                         {msg.sender}
@@ -200,8 +210,6 @@ function Home() {
 
                 <div id="writing-message-div">
                     <input id="message-bar" type="text" onChange={(e) => setInput(e.target.value.trim())} placeholder="Type a message..." />
-                    {/* error ho to uper se .trim() hta dena */}
-                    {/* uper se if input!='' hta dena */}
                     <button id="send-btn" onClick={() => sendMessage()} >&#10147;</button>
                 </div>
             </div>
