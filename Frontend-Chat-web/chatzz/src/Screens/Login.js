@@ -1,9 +1,40 @@
 import "../Styles/Login.css"
+import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import loged_in_user from "./LogedInUser"
 
 function Login() {
     const navigate = useNavigate()
+
+    useEffect(()=>{
+        if(localStorage.getItem("rememberMe")){
+            const username=localStorage.getItem("username")
+            const password=localStorage.getItem("password")
+
+            fetch(`${process.env.REACT_APP_BACKEND_URL}/login`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(
+                    { username, password }
+                )
+            }).then((r)=>{
+                r.json().then((r1)=>{
+                    if(r1.status===200){
+    
+                        loged_in_user.name=r1.Object.name
+                        loged_in_user.username=r1.Object.username
+                        loged_in_user.email=r1.Object.email
+    
+                        navigate('/home')
+                    }
+                    else{
+                        document.getElementById("credential-warning").style.display="flex"
+                    }
+                })
+            })
+        }
+    }, [])
+
 
     function getNewUserDetails(){
 
@@ -79,14 +110,23 @@ function Login() {
         }
     }
 
+    function rememberMe(){
+        const username=document.getElementById("username-login").value
+        const password = document.getElementById("password").value
+        localStorage.setItem("username", username)
+        localStorage.setItem("password", password)
+        localStorage.setItem("rememberMe", true)
+    }
+
     return (
         <>
             <div class="form-container" id="login-container">
                 <h2>Login</h2>
                 <div id="login-form">
                 <label class="warnings" id="credential-warning" >Invalid USERNAME or PASSWORD</label>
-                    <input type="email" id="username-login" placeholder="Username" required />
+                    <input type="text" id="username-login" placeholder="Username" required />
                     <input type="password" id="password" placeholder="Password" required />
+                    <button class="form-btn" onClick={()=>rememberMe()}>REMEMBER ME</button>
                     <button class="form-btn" onClick={()=>verification()}>LOGIN</button>
                 </div>
                 <div class="switch">

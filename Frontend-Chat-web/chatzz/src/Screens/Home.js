@@ -114,9 +114,12 @@ function Home() {
         })
     }
 // FUTURE FEATURES------------------------------------------------------------------
-    // function deleteMessage(){
-
-    // }
+    // encryption
+    // AI
+    // function deleteMessage
+    // send images and videos
+    // video call
+    // voice call
 
     function friendSelected(naam) {
 
