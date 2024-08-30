@@ -4,6 +4,7 @@ const messageSchema = require("../Schemas/messages")
 const newUserSchema = require("../Schemas/newUser")
 const nodemailer = require('nodemailer')
 const bcrypt = require('bcrypt')
+const { json } = require("body-parser")
 require("dotenv").config()
 
 // for email-------------------------------------------
@@ -277,6 +278,12 @@ exports.searchUser = (req, res) => {
             res.status(406).send({ status: 406, message: "Something went wrong" })
         })
     }
+}
+
+exports.wakeupserver = (req, res)=>{
+    res.send({message: "wake up to reality"})
+    // res.send("wake up to reality")
+    console.log("Waking server")
 }
 
 

@@ -8,6 +8,7 @@ router.post('/login',controller.login)
 router.post('/send-message',controller.sendMessage)
 router.post('/chats',controller.showMessages)
 router.post('/search-user',controller.searchUser)
+router.post('/wake-up-server',controller.wakeupserver)
 // router.post('/create-indipendent-account',controller.indipendentAccountCreation)
 
 

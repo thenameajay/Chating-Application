@@ -6,6 +6,9 @@ const bodyParser = require('body-parser')
 const db = require("./DB/Db")
 const port = 8765
 const cors = require("cors")
+const cron = require('node-cron') // SCHEDULER
+const fetch= require('node-fetch')
+require("dotenv").config()
 
 const http = require('http');
 const socketIo = require('socket.io');
@@ -32,6 +35,16 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 
 app.use('/', myroutes)
+
+// MAKING SCHEDULED TASK TO PROTECT SERVER FROM SLEEPING--------------------------
+
+cron.schedule('*/14 * * * *', ()=>{
+  fetch(process.env.SERVER_AWAKE_URL, {method: 'POST'}).then((r1)=>{
+    console.log("server awake")
+  })
+})
+
+// ------------------------------------------------------------------
 
 // WEB SOCKET ---------------------------------------
 
