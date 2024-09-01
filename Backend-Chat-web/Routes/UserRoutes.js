@@ -9,6 +9,7 @@ router.post('/send-message',controller.sendMessage)
 router.post('/chats',controller.showMessages)
 router.post('/search-user',controller.searchUser)
 router.post('/wake-up-server',controller.wakeupserver)
+router.post('/ai',controller.geminiAI)
 // router.post('/create-indipendent-account',controller.indipendentAccountCreation)
 
 

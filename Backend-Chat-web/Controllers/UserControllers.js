@@ -21,6 +21,30 @@ const transporter = nodemailer.createTransport({
 
 // --------------------------------------------------------
 
+
+// FOR AI USE----------------------------------------------------------------------
+
+// THIS CODE IS USED TO GET TEXT OUTPUT FROM PROMPT TEXT
+const { GoogleGenerativeAI } = require("@google/generative-ai");
+
+// Access your API key as an environment variable (see "Set up your API key" above)
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_ID);
+
+async function run(prompt) {
+  // For text-only input, use the gemini-pro model
+  const model = genAI.getGenerativeModel({ model: "gemini-pro"});
+
+  // const prompt = "give me name of any five fruits"
+
+  const result = await model.generateContent(prompt);
+  const response = await result.response;
+  const text = response.text();
+  console.log(text);
+  return text
+}
+
+// --------------------------------------------------------------------------------
+
 // USER REGISTRATATION-------------------
 
 exports.addUser = (req, res) => {
@@ -286,71 +310,12 @@ exports.wakeupserver = (req, res)=>{
     console.log("Waking server")
 }
 
+exports.geminiAI = async (req, res)=>{
+    const prmpt=req.body.prmpt
+    console.log(prmpt)
+    const ansr =await run(prmpt)
+    // console.log(ansr)
+    // console.log(typeof ansr)
 
-// FOR DEBUGGING -----------------------------------------------------------------
-
-// exports.mailTest = (req, res) => {
-//     const { email } = req.body
-//     console.log(mailId)
-//     console.log(pswd)
-//     console.log(typeof mailId)
-//     console.log(typeof pswd)
-
-//     transporter.sendMail({
-//         from: `"CLOVER"<${process.env.MY_MAIL_ID}>`,
-//         to: email,
-//         subject: "OTP verification",
-//         text: "OTP mail",
-//         html: "<h1>yesss</h1>"
-
-//     }).then((r) => {
-//         console.log("mail sended successfully")
-//         res.send("tested OK")
-//     }).catch((err) => {
-//         console.log("mail not sent")
-//         console.log(err)
-//         res.send("testing unsuccessfull")
-//     })
-// }
-
-// ---------------------------------------------------------------------
-
-// exports.indipendentAccountCreation = (req, res) => {
-//     const { name, username, email, password } = req.body
-
-//     userSchema.find({ username: username }).then((r) => {
-//         if (r.length != 0) {
-//             console.log("user already existed")
-//             res.send("this username is already taken")
-//         }
-//         else {
-//             bcrypt.genSalt(10, function (err, salt) {
-//                 if (err) {
-//                     console.log("Error in Encryption salt generation !")
-//                     res.send("Error in Encryption salt generation !")
-//                 }
-//                 else {
-//                     bcrypt.hash(password, salt, function (err, hash) {
-//                         if (err) {
-//                             console.log("Error in Encryption hash Generation ! (indipendent account)")
-//                         }
-//                         else {
-//                             encrptPassword = hash
-//                             userSchema.insertMany({ name: name, username: username, email: email, password: encrptPassword }).then((r1) => {
-//                                 console.log("data storation : SUCCESSFULL ")
-//                                 res.send("data stored successfully")
-//                             }).catch((err) => {
-//                                 console.log("error in storing data (indipendent account)")
-//                                 console.log(err)
-//                             })
-//                         }
-//                     })
-//                 }
-//             })
-//         }
-//     }).catch((err) => {
-//         console.log("error in indipendent account creation !")
-//         res.send("error in indipendent account creation !")
-//         console.log(err)
-//     })
-// }
+    res.send(ansr)
+}
